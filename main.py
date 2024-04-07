@@ -1,24 +1,16 @@
 import logging
+import asyncio
 
-from aiogram import Bot, Dispatcher, executor, types
+from aiogram.utils import executor
 
-with open("bot.token", encoding="UTF-8") as f:
-    TOKEN=f.read()
-API_TOKEN = TOKEN
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-
-# Initialize bot and dispatcher
-bot = Bot(token=API_TOKEN)
-dp = Dispatcher(bot)
+# from handlers import ...   # TODO
+from bot import dp
 
 
+logging.basicConfig(level=logging.DEBUG)
 
-@dp.message_handler()
-async def echo(message: types.Message):
-    await bot.send_message(message.chat.id, message.text[::-1])
+loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)

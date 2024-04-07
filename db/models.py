@@ -7,9 +7,9 @@ from database import Base
 
 
 # Таблица для связи многие-ко-многим между запросами и тегами
-request_tags_table = Table('request_tags', Base.metadata,
-    Column('request_id', ForeignKey('knowledge_requests.id'), primary_key=True),
-    Column('tag_id', ForeignKey('tags.id'), primary_key=True)
+request_tags_table = Table("request_tags", Base.metadata,
+    Column("request_id", ForeignKey("knowledge_requests.id"), primary_key=True),
+    Column("tag_id", ForeignKey("tags.id"), primary_key=True)
 )
 
 
