@@ -1,7 +1,9 @@
+from datetime import datetime
+
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Table, Text
 from sqlalchemy.orm import relationship
-from .database import Base
-from datetime import datetime
+
+from database import Base
 
 
 # Таблица для связи многие-ко-многим между запросами и тегами
@@ -18,8 +20,8 @@ class User(Base):
     contact_info = Column(String)
 
     requests = relationship("KnowledgeRequest", back_populates="user", cascade="all, delete-orphan")
-    responses = relationship("Response", back_populates="user", cascade="all, delete-orphan")
-    subscriptions = relationship("Subscription", back_populates="user", order_by=Subscription.id)
+    responses = relationship(
+        "Response", back_populates="user", cascade="all, delete-orphan")
     notification_history = relationship("NotificationHistory", back_populates="user", order_by="desc(NotificationHistory.timestamp)")
     admin = relationship("Admin", back_populates="user")
 
@@ -53,8 +55,8 @@ class Tag(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
 
-    requests = relationship("KnowledgeRequest", secondary=request_tags_table, back_populates="tags")
-    subscriptions = relationship("Subscription", back_populates="tag", order_by=Subscription.id)
+    requests = relationship(
+        "KnowledgeRequest", secondary=request_tags_table, back_populates="tags")
 
 
 class Subscription(Base):
@@ -66,6 +68,12 @@ class Subscription(Base):
 
     user = relationship("User", back_populates="subscriptions")
     tag = relationship("Tag", back_populates="subscriptions")
+
+
+User.subscriptions = relationship(
+    "Subscription", back_populates="user", order_by=Subscription.id)
+Tag.subscriptions = relationship(
+    "Subscription", back_populates="tag", order_by=Subscription.id)
 
 
 class NotificationHistory(Base):
