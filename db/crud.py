@@ -29,3 +29,12 @@ def add_response_to_request(db: Session, request_id: int, user_id: int, content:
 
 def get_responses_for_request(db: Session, request_id: int):
     return db.query(models.Response).filter(models.Response.request_id == request_id).order_by(models.Response.timestamp.asc()).all()
+
+
+def get_user(db: Session, user_id: int = None, tg_id: int = None):
+    query = db.query(models.User)
+    if user_id:
+        return query.filter(models.User.id == user_id).first()
+    elif tg_id:
+        return query.filter(models.User.tg_id == tg_id).first()
+    return None
