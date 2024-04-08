@@ -2,7 +2,7 @@ from aiogram import types, Router, F
 from aiogram.fsm.context import FSMContext
 
 from responses.request_messages import REQUEST_MESSAGES
-
+from responses.keyboards import get_start_keyboard
 from db import crud
 from db.database import SessionLocal
 
@@ -28,5 +28,5 @@ async def save_request(message: types.Message, state: FSMContext):
             db, tg_id=tg_id, tg_name=message.from_user.username)
     crud.create_knowledge_request(db, user_id=user.id, content=message.text)
     db.close()
-    await message.answer(text=REQUEST_MESSAGES["thank_message"])
+    await message.answer(text=REQUEST_MESSAGES["thank_message"], reply_markup=get_start_keyboard())
     await state.clear()
