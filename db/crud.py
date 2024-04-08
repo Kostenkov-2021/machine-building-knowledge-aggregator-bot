@@ -33,6 +33,14 @@ def add_response_to_request(db: Session, request_id: int, user_id: int, content:
     db.refresh(db_response)
     return db_response
 
+def edit_knowledge_response(db: Session, response_id: int, content: str):
+    db_response=db.query(models.Response).filter(models.Response.id == response_id).first()
+    db_response.content=content
+    db.commit()
+    db.refresh(db_response)
+    return db_response
+
+
 
 def get_responses_for_request(db: Session, request_id: int):
     return db.query(models.Response).filter(models.Response.request_id == request_id).order_by(models.Response.timestamp.asc()).all()
