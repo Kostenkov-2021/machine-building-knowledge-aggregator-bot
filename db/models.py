@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Table, Text
 from sqlalchemy.orm import relationship
 
-from database import Base
+from db.database import Base
 
 
 # Таблица для связи многие-ко-многим между запросами и тегами
