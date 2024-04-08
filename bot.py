@@ -8,8 +8,10 @@ from handlers.start import start_router
 from handlers.knowledge_request import request_router
 
 
-API_TOKEN = os.getenv("MBKA_API_TOKEN", "your_default_api_token")
-
+API_TOKEN = os.getenv("MBKA_API_TOKEN", "forgot")
+if API_TOKEN=="forgot":
+    API_TOKEN=input("enter token: ")
+    os.environ["MBKA_API_TOKEN"]=API_TOKEN
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(storage=MemoryStorage(), fsm_strategy=FSMStrategy.USER_IN_CHAT)
 
