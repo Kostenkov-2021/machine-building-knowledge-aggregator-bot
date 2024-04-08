@@ -1,16 +1,14 @@
 import logging
 import asyncio
 
-from aiogram.utils import executor
+from handlers import *
 
-# from handlers import ...   # TODO
-from bot import dp
+from bot import bot, dp
 
 
-logging.basicConfig(level=logging.DEBUG)
-
-loop = asyncio.new_event_loop()
-asyncio.set_event_loop(loop)
+async def main() -> None:
+    logging.basicConfig(level=logging.DEBUG)
+    await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    executor.start_polling(dp, skip_updates=True)
+    asyncio.run(main())

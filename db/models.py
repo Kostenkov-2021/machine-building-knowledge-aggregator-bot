@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Table, Text
 from sqlalchemy.orm import relationship
 
-from database import Base
+from db.database import Base
 
 
 # Таблица для связи многие-ко-многим между запросами и тегами
@@ -16,8 +16,9 @@ request_tags_table = Table("request_tags", Base.metadata,
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
-    username = Column(String, index=True, unique=True)
-    contact_info = Column(String)
+    name = Column(String, nullable=True)
+    tg_name = Column(String, unique=True, nullable=False)
+    tg_id = Column(Integer, unique=True, nullable=False)
 
     requests = relationship("KnowledgeRequest", back_populates="user", cascade="all, delete-orphan")
     responses = relationship(
