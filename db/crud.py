@@ -13,9 +13,11 @@ def create_knowledge_request(db: Session, user_id: int, content: str):
     db.refresh(db_request)
     return db_request
 
+
 def edit_knowledge_request(db: Session, request_id: int, content: str):
-    db_request=db.query(models.KnowledgeRequest).filter(models.KnowledgeRequest.id == request_id).first() # if unique, is first necessary?
-    db_request.content=content
+    db_request = db.query(models.KnowledgeRequest).filter(
+        models.KnowledgeRequest.id == request_id).first()
+    db_request.content = content
     db.commit()
     db.refresh(db_request)
     return db_request
@@ -33,13 +35,13 @@ def add_response_to_request(db: Session, request_id: int, user_id: int, content:
     db.refresh(db_response)
     return db_response
 
-def edit_knowledge_response(db: Session, response_id: int, content: str):
+
+def edit_response(db: Session, response_id: int, content: str):
     db_response=db.query(models.Response).filter(models.Response.id == response_id).first()
-    db_response.content=content
+    db_response.content = content
     db.commit()
     db.refresh(db_response)
     return db_response
-
 
 
 def get_responses_for_request(db: Session, request_id: int):

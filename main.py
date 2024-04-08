@@ -11,7 +11,7 @@ async def main() -> None:
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    try: # when CTRL+C-ing, it exits but then keyboard interrupt raises.
+    try:
         asyncio.run(main())
     except KeyboardInterrupt:
         print("Exiting!")
