@@ -13,6 +13,13 @@ def create_knowledge_request(db: Session, user_id: int, content: str):
     db.refresh(db_request)
     return db_request
 
+def edit_knowledge_request(db: Session, request_id: int, content: str):
+    db_request=db.query(models.KnowledgeRequest).filter(models.KnowledgeRequest.id == request_id).first() # if unique, is first necessary?
+    db_request.content=content
+    db.commit()
+    db.refresh(db_request)
+    return db_request
+
 
 def get_knowledge_requests(db: Session):
     return db.query(models.KnowledgeRequest).order_by(models.KnowledgeRequest.timestamp.asc()).all()
