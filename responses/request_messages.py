@@ -4,7 +4,7 @@ REQUEST_MESSAGES = {
     "delete_confirmation_prompt": "Вы уверены, что хотите удалить запрос? Все связанные с ним ответы будут удалены.",
     "thank_message": "Ваш запрос сохранён, спасибо!",
     "thank_edit_message": "Ваш запрос отредактирован, спасибо!",
-    "deleted_message": "Ваш запрос удалён"
-
-
+    "deleted_message": "Ваш запрос удалён",
+    "view_requests_prompt": "Выберите запрос для просмотра:",
+    "no_requests_message": "Запросов пока нет"
 }

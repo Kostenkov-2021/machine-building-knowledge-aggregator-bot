@@ -6,7 +6,7 @@ from responses.keyboards import get_start_keyboard
 from db import crud
 from db.database import SessionLocal
 
-from states.request_state import KnowledgeRequestState
+from states.states import States
 
 
 request_router = Router()
@@ -15,10 +15,10 @@ request_router = Router()
 @request_router.message(F.text.casefold() == "новый запрос")
 async def new_request(message: types.Message, state: FSMContext):
     await message.answer(text=REQUEST_MESSAGES["request_prompt"])
-    await state.set_state(KnowledgeRequestState.waiting_for_request_content)
+    await state.set_state(States.waiting_for_request_content)
 
 
-@request_router.message(KnowledgeRequestState.waiting_for_request_content)
+@request_router.message(States.waiting_for_request_content)
 async def save_request(message: types.Message, state: FSMContext):
     db = SessionLocal()
     tg_id = message.from_user.id

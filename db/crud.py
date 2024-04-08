@@ -23,6 +23,10 @@ def edit_knowledge_request(db: Session, request_id: int, content: str):
     return db_request
 
 
+def get_knowledge_request(db: Session, request_id: int):
+    return db.query(models.KnowledgeRequest).filter(models.KnowledgeRequest.id == request_id).first()
+
+
 def get_knowledge_requests(db: Session):
     return db.query(models.KnowledgeRequest).order_by(models.KnowledgeRequest.timestamp.asc()).all()
 

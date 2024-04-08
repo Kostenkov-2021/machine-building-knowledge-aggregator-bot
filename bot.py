@@ -6,6 +6,7 @@ from aiogram.fsm.strategy import FSMStrategy
 
 from handlers.start import start_router
 from handlers.knowledge_request import request_router
+from handlers.view_requests import view_requests_router
 
 
 API_TOKEN = os.getenv("MBKA_API_TOKEN", "forgot")
@@ -17,3 +18,4 @@ dp = Dispatcher(storage=MemoryStorage(), fsm_strategy=FSMStrategy.USER_IN_CHAT)
 
 dp.include_router(start_router)
 dp.include_router(request_router)
+dp.include_router(view_requests_router)
