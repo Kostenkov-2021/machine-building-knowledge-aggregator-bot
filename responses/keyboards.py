@@ -18,7 +18,7 @@ def get_start_keyboard():
 def get_requests_keyboard(requests: List[KnowledgeRequest]) -> InlineKeyboardMarkup:
     buttons = []
     for request in requests:
-        button_text = f"От @{request.user.tg_name}: {request.content[:40]}..."
+        button_text = f"От @{request.user.tg_name}: {request.content[:40].split('\n')[0]}..."  # if there is a line ending in this 40 chars, return first line.
         callback_data = f"request_{request.id}"
         button = InlineKeyboardButton(
             text=button_text, callback_data=callback_data)
