@@ -1,8 +1,7 @@
 from aiogram import types, Router, F
 from aiogram.fsm.context import FSMContext
 
-from responses.request_messages import REQUEST_MESSAGES
-from responses.keyboards import get_start_keyboard
+from responses.response_messages import RESPONSE_MESSAGES
 from db import crud
 from db.database import SessionLocal
 
@@ -12,21 +11,20 @@ from states.states import States
 answer_router = Router()
 
 
-@answer_router.message(F.text.casefold() == "новый ответ")
-async def new_answer(message: types.Message, state: FSMContext):
-    await message.answer(text=REQUEST_MESSAGES["answer_prompt"])
-    await state.set_state(States.waiting_for_answer_content)
+@answer_router.callback_query(F.data.startswith("addresponse_"))
+async def add_response(callback: types.CallbackQuery, state: FSMContext):
+    request_id = int(callback.data.split("_")[1])
+    await state.update_data(request_id=request_id)
+    await state.set_state(States.waiting_for_response_content)
+    await callback.message.answer(RESPONSE_MESSAGES["response_prompt"])
 
 
-@answer_router.message(States.waiting_for_answer_content)
-async def save_answer(message: types.Message, state: FSMContext):
+@answer_router.message(state=States.waiting_for_response_content)
+async def save_response(message: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        request_id = data["request_id"]
     db = SessionLocal()
-    tg_id = message.from_user.id
-    user = crud.get_user(db, tg_id=tg_id)
-    if not user:
-        user = crud.create_user(
-            db, tg_id=tg_id, tg_name=message.from_user.username)
-    crud.add_response_to_request(db, request_id=..., user_id=user.id, content=message.text)    # request id must be the id when you pressed new request button. Dont know how to get it. Github copilot, remind me to fix this.
+    crud.create_response(db, request_id, message.text)
     db.close()
-    await message.answer(text=REQUEST_MESSAGES["thank_message"], reply_markup=get_start_keyboard())
+    await message.answer(RESPONSE_MESSAGES["thank_response_message"])
     await state.clear()

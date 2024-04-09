@@ -29,7 +29,7 @@ def get_knowledge_request(db: Session, request_id: int):
 
 
 def get_knowledge_requests(db: Session):
-    return select(models.KnowledgeRequest).order_by(models.KnowledgeRequest.timestamp.asc()).all()
+    return db.execute(select(models.KnowledgeRequest).order_by(models.KnowledgeRequest.timestamp.desc())).all()
 
 
 def add_response_to_request(db: Session, request_id: int, user_id: int, content: str):
@@ -64,7 +64,7 @@ def create_user(db: Session, tg_id: int, tg_name: str, name: str = None):
 def get_user(db: Session, user_id: int = None, tg_id: int = None):
     query = select(models.User)
     if user_id:
-        return query.where(models.User.id == user_id).first()
+        return db.execute(query.where(models.User.id == user_id)).first()
     elif tg_id:
-        return query.where(models.User.tg_id == tg_id).first()
+        return db.execute(query.where(models.User.tg_id == tg_id)).first()
     return None
