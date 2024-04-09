@@ -16,15 +16,15 @@ def create_knowledge_request(db: Session, user_id: int, content: str):
 
 
 def edit_knowledge_request(db: Session, request_id: int, content: str):
-    stmt = update(models.KnowledgeRequest).where(models.KnowledgeRequest.id == request_id).values(content=content)
-    db.execute(stmt)
+    db_request = select(models.KnowledgeRequest).where(
+        models.KnowledgeRequest.id == request_id).first()
+    db_request.content = content
     db.commit()
-    db_request=select(models.KnowledgeRequest).where(models.KnowledgeRequest.id == request_id).first()  # is this necessary?
     db.refresh(db_request)
     return db_request
 
 
-def get_knowledge_request(db: Session, request_id: int):  #using select instead of query
+def get_knowledge_request(db: Session, request_id: int):
     return db.execute(select(models.KnowledgeRequest).where(models.KnowledgeRequest.id == request_id)).first()
 
 
