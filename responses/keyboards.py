@@ -2,7 +2,7 @@ from typing import List
 
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 
-from db.models import KnowledgeRequest
+from db.models import KnowledgeRequest, Response
 
 
 def get_start_keyboard():
@@ -29,11 +29,37 @@ def get_requests_keyboard(requests: List[KnowledgeRequest]) -> InlineKeyboardMar
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
 
+def get_responses_keyboard(responses: List[Response]) -> InlineKeyboardMarkup:
+    buttons = []
+    for response in responses:
+        button_text = "От @{}: {}...".format(
+            response.user.tg_name, response.content.split("\n")[0]
+        )
+        callback_data = f"response_{response.id}"
+        button = InlineKeyboardButton(
+            text=button_text, callback_data=callback_data)
+        buttons.append([button])
+
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
+
 
 def get_request_actions_keyboard(request_id):
     buttons = [
         [InlineKeyboardButton(text="Добавить ответ",
                               callback_data=f"addresponse_{request_id}")],
+        [InlineKeyboardButton(text="просмотреть ответы",
+                                callback_data=f"viewresponses_{request_id}")],
+    ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
+
+def get_response_actions_keyboard(response_id):
+    buttons = [
+        [InlineKeyboardButton(text="Редактировать ответ",
+                              callback_data=f"editresponse_{response_id}")],
+        [InlineKeyboardButton(text="Удалить ответ",
+                                callback_data=f"deleteresponse_{response_id}")],
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
