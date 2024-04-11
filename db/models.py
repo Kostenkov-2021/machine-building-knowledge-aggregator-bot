@@ -65,8 +65,8 @@ class Subscription(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     tag_id = Column(Integer, ForeignKey("tags.id"))
-    active = Column(Integer, default=1)  # 0 for inactive, 1 for active
-    # why not boolean?
+    active = Column(Boolean, default=True)
+
 
     user = relationship("User", back_populates="subscriptions")
     tag = relationship("Tag", back_populates="subscriptions")
