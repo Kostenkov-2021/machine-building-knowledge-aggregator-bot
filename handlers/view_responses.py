@@ -11,24 +11,25 @@ from db.database import SessionLocal
 view_responses_router = Router()
 
 
-@view_responses_router.message(F.text.casefold() == "просмотреть запросы")
-async def view_responses(message: types.Message):
+@view_responses_router.callback_query(F.data.startswith("viewresponse_"))
+async def view_responses(callback: types.CallbackQuery):
+    request_id = int(callback.data.split("_")[1])
     db = SessionLocal()
-    responses = crud.get_responses(db)
-
+    responses = crud.get_responses_for_request(db, request_id)
     if not responses:
-        await message.answer(RESPONSE_MESSAGES["no_responses_message"], reply_markup=get_start_keyboard())
+        await callback.message.answer(RESPONSE_MESSAGES["no_responses_message"], reply_markup=get_start_keyboard())
         db.close()
         return
 
     keyboard = get_responses_keyboard(responses)
     db.close()
-    await message.answer(RESPONSE_MESSAGES["view_responses_prompt"], reply_markup=keyboard)
+    await callback.message.answer(RESPONSE_MESSAGES["view_responses_prompt"], reply_markup=keyboard)
 
 
-@view_responses_router.callback(F.data.startswith("response_"))
+@view_responses_router.callback_query(F.data.startswith("response_"))
 async def view_response(callback: types.CallbackQuery):
     response_id = int(callback.data.split("_")[1])
+    print(response_id)
     db = SessionLocal()
     response = crud.get_response(db, response_id)
     db.close()

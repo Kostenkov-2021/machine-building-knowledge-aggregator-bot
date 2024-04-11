@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy.orm import Session
-from sqlalchemy import select, update #, delete
+from sqlalchemy import select # delete
 
 from db import models
 
@@ -46,6 +46,9 @@ def edit_response(db: Session, response_id: int, content: str):
     db.commit()
     db.refresh(db_response)
     return db_response
+
+def get_response(db: Session, response_id: int):
+    return db.execute(select(models.Response).where(models.Response.id == response_id)).scalars().first()
 
 
 def get_responses_for_request(db: Session, request_id: int):  #using select instead of query
