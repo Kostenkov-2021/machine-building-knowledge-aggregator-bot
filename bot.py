@@ -4,7 +4,7 @@ import logging
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.strategy import FSMStrategy
-from aiogram.utils.exceptions import AiogramException
+from aiogram.exceptions import AiogramError
 
 from handlers.start import start_router
 from handlers.knowledge_request import request_router
