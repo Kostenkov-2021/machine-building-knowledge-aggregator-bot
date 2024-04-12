@@ -6,7 +6,7 @@ from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError
 import logging
 from db import models
-from db.models import KnowledgeRequest, Tag
+from db.models import KnowledgeRequest, Tag, RequestVote, ResponseVote, Subscription, Response
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
@@ -218,6 +218,6 @@ def reject_request(session: Session, request_id: int):
     try:
         session.delete(session.query(models.KnowledgeRequest).get(request_id))
         session.commit()
-            except SQLAlchemyError as e:
+    except SQLAlchemyError as e:
         logger.error(f"Error rejecting request: {e}")
         raise

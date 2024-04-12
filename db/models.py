@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy.ext.declarative import declarative_base
+#from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Table, Text, Boolean
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import UniqueConstraint
@@ -33,7 +33,7 @@ class KnowledgeRequest(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     content = Column(Text)
-        file_url = Column(Text)  # URL файла
+    file_url = Column(Text)  # URL файла
     file_type = Column(String)  # Тип файла: 'text', 'image', 'video', 'audio'
     timestamp = Column(DateTime, index=True, default=datetime.utcnow)
 
@@ -71,7 +71,7 @@ class Subscription(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     tag_id = Column(Integer, ForeignKey("tags.id"), nullable=True)
     active = Column(Boolean, default=True)
-   subscription_type = Column(String, default="tag")
+    subscription_type = Column(String, default="tag")
 
     user = relationship("User", back_populates="subscriptions")
     tag = relationship("Tag", back_populates="subscriptions")
