@@ -1,6 +1,6 @@
 from aiogram import types, Router
 from db.database import get_db
-from crud import get_requests_by_tag
+from db.crud import get_requests_by_tag
 
 search_router = Router()
 
