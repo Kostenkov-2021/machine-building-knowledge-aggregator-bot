@@ -3,7 +3,7 @@ import asyncio
 
 from aiogram.types import ContentType, Message
 from aiogram import F
-from bot import dp
+from bot import dp, bot
 
 from db.crud import create_knowledge_request
 from db.database import get_db
@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 async def main() -> None:
     # Запуск поллинга
-    await dp.start_polling()
+    await dp.start_polling(bot)
 
 
 @dp.message(F.content_type == ContentType.TEXT or F.content_type == ContentType.VOICE or F.content_type == ContentType.PHOTO)
