@@ -33,6 +33,8 @@ class KnowledgeRequest(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     content = Column(Text)
+        file_url = Column(Text)  # URL файла
+    file_type = Column(String)  # Тип файла: 'text', 'image', 'video', 'audio'
     timestamp = Column(DateTime, index=True, default=datetime.utcnow)
 
     user = relationship("User", back_populates="requests")
@@ -46,6 +48,8 @@ class Response(Base):
     request_id = Column(Integer, ForeignKey("knowledge_requests.id"))
     user_id = Column(Integer, ForeignKey("users.id"))
     content = Column(Text)
+    file_url = Column(Text)  # URL файла
+    file_type = Column(String)  # Тип файла: 'text', 'image', 'video', 'audio'
     timestamp = Column(DateTime, index=True, default=datetime.utcnow)
 
     request = relationship("KnowledgeRequest", back_populates="responses")
@@ -65,9 +69,9 @@ class Subscription(Base):
     __tablename__ = "subscriptions"
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"))
-    tag_id = Column(Integer, ForeignKey("tags.id"))
+    tag_id = Column(Integer, ForeignKey("tags.id"), nullable=True)
     active = Column(Boolean, default=True)
-
+   subscription_type = Column(String, default="tag")
 
     user = relationship("User", back_populates="subscriptions")
     tag = relationship("Tag", back_populates="subscriptions")

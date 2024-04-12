@@ -6,15 +6,15 @@ from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError
 import logging
 from db import models
-from models import KnowledgeRequest, Tag
+from db.models import KnowledgeRequest, Tag
 
-# Настройка логгирования
+# Настройка логирования
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def create_knowledge_request(db: Session, user_id: int, content: str):
+def create_knowledge_request(db: Session, user_id: int, content: str, file_url=None, file_type='text'):
     try:
-        db_request = models.KnowledgeRequest(user_id=user_id, content=content, timestamp=datetime.utcnow())
+        db_request = models.KnowledgeRequest(user_id=user_id, content=content, file_url=file_url, file_type=file_type, timestamp=datetime.utcnow())
         db.add(db_request)
         db.commit()
         db.refresh(db_request)
@@ -52,9 +52,9 @@ def get_knowledge_requests(db: Session):
         logger.error(f"Error getting knowledge requests: {e}")
         raise
 
-def add_response_to_request(db: Session, request_id: int, user_id: int, content: str):
+def add_response_to_request(db: Session, request_id: int, user_id: int, content: str, file_url=None, file_type='text'):
     try:
-        db_response = models.Response(request_id=request_id, user_id=user_id, content=content, timestamp=datetime.utcnow())
+        db_response = models.Response(request_id=request_id, user_id=user_id, content=content, file_url=file_url, file_type=file_type, timestamp=datetime.utcnow())
         db.add(db_response)
         db.commit()
         db.refresh(db_response)
@@ -158,4 +158,66 @@ def get_requests_by_tag(session: Session, tag_name: str):
         return session.query(KnowledgeRequest).join(KnowledgeRequest.tags).filter(Tag.name == tag_name).all()
     except SQLAlchemyError as e:
         logger.error(f"Error getting requests by tag: {e}")
+        raise
+
+
+def subscribe_to_tag(session: Session, user_id: int, tag_id: int):
+    try:
+        subscription = Subscription(user_id=user_id, tag_id=tag_id, subscription_type="tag", active=True)
+        session.add(subscription)
+        session.commit()
+    except SQLAlchemyError as e:
+        logger.error(f"Error subscribeing to tag: {e}")
+        raise
+
+def subscribe_to_responses(session: Session, user_id: int):
+    try:
+        subscription = Subscription(user_id=user_id, subscription_type="response", active=True)
+        session.add(subscription)
+        session.commit()
+    except SQLAlchemyError as e:
+        logger.error(f"Error subscribing to responses: {e}")
+        raise
+
+def unsubscribe(session: Session, user_id: int, subscription_id: int):
+    try:
+        subscription = session.query(Subscription).filter_by(id=subscription_id, user_id=user_id).first()
+        if subscription:
+            session.delete(subscription)
+        session.commit()
+    except SQLAlchemyError as e:
+        logger.error(f"Error unsubscribing: {e}")
+        raise
+
+
+def authenticate_admin(session: Session, login: str, password_hash: str):
+    try:
+        admin = session.query(models.Admin).filter_by(login=login, password_hash=password_hash).first()
+        return admin is not None
+    except SQLAlchemyError as e:
+        logger.error(f"Error authentication admin: {e}")
+        raise
+
+def get_pending_requests(session: Session):
+    try:
+        return session.query(models.KnowledgeRequest).filter_by(approved=False).all()
+    except SQLAlchemyError as e:
+        logger.error(f"Error getting pending requests: {e}")
+        raise
+
+def approve_request(session: Session, request_id: int):
+    try:
+        request = session.query(models.KnowledgeRequest).get(request_id)
+        request.approved = True
+        session.commit()
+    except SQLAlchemyError as e:
+        logger.error(f"Error approving request: {e}")
+        raise
+
+def reject_request(session: Session, request_id: int):
+    try:
+        session.delete(session.query(models.KnowledgeRequest).get(request_id))
+        session.commit()
+            except SQLAlchemyError as e:
+        logger.error(f"Error rejecting request: {e}")
         raise

@@ -72,3 +72,17 @@ def get_voting_keyboard(entity_id: int, entity_type: str):
         [InlineKeyboardButton("Голос за", callback_data=f"vote_{entity_type}_{entity_id}_1"),
          InlineKeyboardButton("Голос против", callback_data=f"vote_{entity_type}_{entity_id}_-1")]
     ])
+    
+    
+    def get_add_tags_keyboard(request_id: int):
+    """Создает клавиатуру для добавления тегов к запросу."""
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="Добавить теги", callback_data=f"add_tags_{request_id}")]
+    ])
+
+def get_search_by_tag_keyboard():
+    """Создает клавиатуру для поиска запросов по тегу."""
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="Поиск по тегам", callback_data="search_by_tag")]
+    ])
+    
