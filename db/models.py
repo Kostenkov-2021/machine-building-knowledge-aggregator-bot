@@ -1,8 +1,8 @@
 from datetime import datetime
 
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Table, Text
-from sqlalchemy.orm import relationship
-
+from sqlalchemy.orm import relationship, backref
+from sqlalchemy.schema import UniqueConstraint
 from db.database import Base
 
 
@@ -93,20 +93,24 @@ class RequestVote(Base):
     id = Column(Integer, primary_key=True)
     request_id = Column(Integer, ForeignKey("knowledge_requests.id"))
     user_id = Column(Integer, ForeignKey("users.id"))
+    vote = Column(Integer)  # +1 for upvote, -1 for downvote
 
-    request = relationship("KnowledgeRequest")
+    request = relationship("KnowledgeRequest", backref=backref("votes", cascade="all, delete-orphan"))
     user = relationship("User")
 
+    __table_args__ = (UniqueConstraint('request_id', 'user_id', name='_request_user_uc'),)
 
 class ResponseVote(Base):
     __tablename__ = "response_votes"
     id = Column(Integer, primary_key=True)
     response_id = Column(Integer, ForeignKey("responses.id"))
     user_id = Column(Integer, ForeignKey("users.id"))
+    vote = Column(Integer)  # +1 for upvote, -1 for downvote
 
-    response = relationship("Response")
+    response = relationship("Response", backref=backref("votes", cascade="all, delete-orphan"))
     user = relationship("User")
 
+    __table_args__ = (UniqueConstraint('response_id', 'user_id', name='_response_user_uc'),)
 
 class Admin(Base):
     __tablename__ = "admins"

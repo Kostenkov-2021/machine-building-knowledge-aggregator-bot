@@ -2,6 +2,7 @@ from datetime import datetime
 
 from sqlalchemy.orm import Session
 from sqlalchemy import select
+from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError
 import logging
 
@@ -109,3 +110,32 @@ def get_user(db: Session, user_id: int = None, tg_id: int = None):
     except SQLAlchemyError as e:
         logger.error(f"Error getting user: {e}")
         raise
+
+def add_or_update_vote(session: Session, model, object_id, user_id, vote_value):
+    try:
+    vote = session.query(model).filter_by(object_id=object_id, user_id=user_id).first()
+    if vote:
+        vote.vote = vote_value
+    else:
+        vote = model(object_id=object_id, user_id=user_id, vote=vote_value)
+        session.add(vote)
+    session.commit()
+    except SQLAlchemyError as e:
+        logger.error(f"Error adding or updating vote: {e}")
+        raise
+
+def get_sorted_knowledge_requests(session: Session):
+    try:
+    return session.query(KnowledgeRequest, func.sum(RequestVote.vote).label("votes")).join(RequestVote).group_by(KnowledgeRequest.id).order_by("votes").all()
+    except SQLAlchemyError as e:
+        logger.error(f"Error getting sorted knowledge requests: {e}")
+        raise
+
+def get_sorted_responses(session: Session, request_id):
+    try:
+    return session.query(Response, func.sum(ResponseVote.vote).label("votes")).join(ResponseVote).filter(Response.request_id == request_id).group_by(Response.id).order_by("votes").all()
+    except SQLAlchemyError as e:
+        logger.error(f"Error getting sorted responses: {e}")
+        raise
+    
+    
