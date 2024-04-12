@@ -65,9 +65,9 @@ def get_response_actions_keyboard(response_id):
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
-    
-    
-    def get_voting_keyboard(entity_id: int, entity_type: str):
+
+
+def get_voting_keyboard(entity_id: int, entity_type: str):
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton("Голос за", callback_data=f"vote_{entity_type}_{entity_id}_1"),
          InlineKeyboardButton("Голос против", callback_data=f"vote_{entity_type}_{entity_id}_-1")]
