@@ -5,8 +5,8 @@ from sqlalchemy import select
 from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError
 import logging
-
 from db import models
+from models import KnowledgeRequest, Tag
 
 # Настройка логгирования
 logging.basicConfig(level=logging.INFO)
@@ -137,5 +137,25 @@ def get_sorted_responses(session: Session, request_id):
     except SQLAlchemyError as e:
         logger.error(f"Error getting sorted responses: {e}")
         raise
-    
-    
+
+def add_tags_to_request(session: Session, request_id: int, tag_names: list):
+    try:
+        request = session.query(KnowledgeRequest).get(request_id)
+        for tag_name in tag_names:
+            tag = session.query(Tag).filter_by(name=tag_name).first()
+            if not tag:
+                tag = Tag(name=tag_name)
+                session.add(tag)
+            if tag not in request.tags:
+                request.tags.append(tag)
+        session.commit()
+    except SQLAlchemyError as e:
+        logger.error(f"Error adding tags to request: {e}")
+        raise
+
+def get_requests_by_tag(session: Session, tag_name: str):
+    try:
+        return session.query(KnowledgeRequest).join(KnowledgeRequest.tags).filter(Tag.name == tag_name).all()
+    except SQLAlchemyError as e:
+        logger.error(f"Error getting requests by tag: {e}")
+        raise

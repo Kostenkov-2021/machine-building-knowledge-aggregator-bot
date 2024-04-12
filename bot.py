@@ -11,6 +11,8 @@ from handlers.knowledge_request import request_router
 from handlers.view_requests import view_requests_router
 from handlers.view_responses import view_responses_router
 from handlers.answer_request import answer_router
+from handlers.search_by_tags import search_router
+
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)

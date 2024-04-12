@@ -1,10 +1,6 @@
 import logging
 import asyncio
 
-from handlers.start import start_router
-from handlers.knowledge_request import request_router
-from handlers.view_requests import view_requests_router
-from handlers.answer_request import answer_router
 from bot import dp
 
 # Настройка логирования
