@@ -41,5 +41,6 @@ if __name__ == "__main__":
     try:
         logger.info("Starting bot")
         dp.start_polling(bot)
-    except AiogramException as e:
+    except AiogramError as e:
         logger.error(f"Error starting bot: {e}")
+        raise

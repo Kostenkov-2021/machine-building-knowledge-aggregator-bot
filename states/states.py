@@ -8,4 +8,5 @@ class States(StatesGroup):
     waiting_for_edit_response_content = State()
     editing_request_content = State()
     editing_response_content = State()
-    
+    waiting_for_username = State()
+    waiting_for_password = State()

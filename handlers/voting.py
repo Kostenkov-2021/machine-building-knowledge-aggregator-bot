@@ -1,5 +1,5 @@
 from aiogram import Dispatcher, types
-from crud import add_vote_to_knowledge_request, add_vote_to_response
+from db.crud import add_vote_to_knowledge_request, add_vote_to_response
 
 async def vote_for_request(message: types.Message):
     # Извлекаем данные из сообщения
