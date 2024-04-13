@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy.orm import Session
-from sqlalchemy import select, update #, delete
+from sqlalchemy import select #update #, delete
 from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError
 import logging
@@ -81,39 +81,42 @@ def add_or_update_vote(session: Session, model, object_id, user_id, vote_value):
         session.commit()
 
 def get_sorted_knowledge_requests(session: Session):
-    return db.execute(select(KnowledgeRequest, func.sum(RequestVote.vote).label("votes")).join(RequestVote)..order_by(KnowledgeRequest.id).order_by("votes").all()
+    return session.execute(select(models.KnowledgeRequest, func.sum(models.RequestVote.vote).label("votes")).join(models.RequestVote).order_by(models.KnowledgeRequest.id).order_by("votes")).all()
 
 def get_sorted_responses(session: Session, request_id):
-    return session.query(Response, func.sum(ResponseVote.vote).label("votes")).join(ResponseVote).filter(Response.request_id == request_id).group_by(Response.id).order_by("votes").all()
+    return session.query(models.Response, func.sum(models.ResponseVote.vote).label("votes")).join(models.ResponseVote).filter(models.Response.request_id == request_id).group_by(models.Response.id).order_by("votes").all()
 
 def add_tags_to_request(session: Session, request_id: int, tag_names: list):
-    request = session.query(KnowledgeRequest).get(request_id)
+    request = session.query(models.KnowledgeRequest).get(request_id)
     for tag_name in tag_names:
-        tag = session.query(Tag).filter_by(name=tag_name).first()
+        tag = session.query(models.Tag).filter_by(name=tag_name).first()
     if not tag:
-        tag = Tag(name=tag_name)
-    session.add(tag)
+        tag = models.Tag(name=tag_name)
+        session.add(tag)
         if tag not in request.tags:
             request.tags.append(tag)
     session.commit()
 
 def get_requests_by_tag(session: Session, tag_name: str):
-        return session.query(KnowledgeRequest).join(KnowledgeRequest.tags).filter(Tag.name == tag_name).all()
+        return session.query(models.KnowledgeRequest).join(models.KnowledgeRequest.tags).filter(models.Tag.name == tag_name).all()
 
 
 def subscribe_to_tag(session: Session, user_id: int, tag_id: int):
     try:
-        subscription = Subscription(user_id=user_id, tag_id=tag_id, subscription_type="tag", active=True)
+        subscription = models.Subscription(user_id=user_id, tag_id=tag_id, subscription_type="tag", active=True)
         session.add(subscription)
         session.commit()
+    except SQLAlchemyError as e:
+        logger.error(f"Error while subscribing to tag: {e}")
+        session.rollback()
 
 def subscribe_to_responses(session: Session, user_id: int):
-        subscription = Subscription(user_id=user_id, subscription_type="response", active=True)
+        subscription = models.Subscription(user_id=user_id, subscription_type="response", active=True)
         session.add(subscription)
         session.commit()
 
 def unsubscribe(session: Session, user_id: int, subscription_id: int):
-        subscription = session.query(Subscription).filter_by(id=subscription_id, user_id=user_id).first()
+        subscription = session.query(models.Subscription).filter_by(id=subscription_id, user_id=user_id).first()
         if subscription:
             session.delete(subscription)
         session.commit()
@@ -123,6 +126,9 @@ def authenticate_admin(session: Session, login: str, password_hash: str):
     try:
         admin = session.query(models.Admin).filter_by(login=login, password_hash=password_hash).first()
         return admin is not None
+    except SQLAlchemyError as e:
+        logger.error(f"Error while authenticating admin: {e}")
+        return False
 
 def get_pending_requests(session: Session):
         return session.query(models.KnowledgeRequest).filter_by(approved=False).all()
