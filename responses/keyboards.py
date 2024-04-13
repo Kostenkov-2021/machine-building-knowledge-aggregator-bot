@@ -49,7 +49,7 @@ def get_request_actions_keyboard(request_id):
         [InlineKeyboardButton(text="Добавить ответ",
                               callback_data=f"addresponse_{request_id}")],
         [InlineKeyboardButton(text="просмотреть ответы",
-                              callback_data=f"viewresponse_{request_id}")],
+                              callback_data=f"viewresponses_{request_id}")],
         [InlineKeyboardButton(text="Редактировать запрос",
                                 callback_data=f"editrequest_{request_id}")],
     ]
