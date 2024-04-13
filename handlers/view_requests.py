@@ -29,8 +29,7 @@ async def view_requests(message: types.Message):
 async def view_request(callback: types.CallbackQuery):
     request_id = int(callback.data.split("_")[1])
     db = SessionLocal()
-    request = crud.get_knowledge_request(
-        db, request_id)
+    request = crud.get_knowledge_request(db, request_id)
     db.close()
 
     await callback.message.answer(request.content, reply_markup=get_request_actions_keyboard(request_id))

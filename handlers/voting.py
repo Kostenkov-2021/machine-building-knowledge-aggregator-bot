@@ -1,5 +1,12 @@
-from aiogram import Dispatcher, types
+from aiogram import types, Router, F
+from aiogram.fsm.context import FSMContext
+
 from db.crud import add_vote_to_knowledge_request, add_vote_to_response
+from states.states import States
+
+vote_router = Router()
+
+    @request_router.message(F.text.casefold() == "новый запрос")
 
 async def vote_for_request(message: types.Message):
     # Извлекаем данные из сообщения
